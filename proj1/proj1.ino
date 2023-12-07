@@ -6,7 +6,9 @@ const char* ssid     = "John";
 const char* password = "ionutu24";
 
 int btnGPIO = 0;
+int vibrationSensorPin = 2; // Exemplu: D2 pe ESP32
 int btnState = false;
+bool motionDetected = false;
 
 void connectToWiFi(void *parameter) {
     Serial.println();
@@ -47,12 +49,36 @@ void connectToWiFi(void *parameter) {
     }
 }
 
+void readVibrationSensor(void *parameter) {
+    while (true) {
+        // Citeste starea senzorului de vibratii
+        motionDetected = digitalRead(vibrationSensorPin) == HIGH;
+        vTaskDelay(pdMS_TO_TICKS(100)); // Pauza de 100 de milisecunde
+    }
+}
+
+void sendNotification(void *parameter) {
+    while (true) {
+        if (motionDetected) {
+            // Trimite notificare la Serial Monitor
+            Serial.println("[Motion] Motion detected! ");
+
+            // Așteaptă o perioadă de timp pentru a evita trimiterea continuă a notificărilor
+            vTaskDelay(pdMS_TO_TICKS(5000)); // Pauza de 5 secunde
+        } else {
+            // Așteaptă un scurt interval pentru a economisi resursele CPU
+            vTaskDelay(pdMS_TO_TICKS(100)); // Pauza de 100 de milisecunde
+        }
+    }
+}
+
 void setup() {
     Serial.begin(115200);
     delay(10);
 
-    // Set GPIO0 Boot button as input
+    // Set GPIO0 Boot button și pinul senzorului de vibrații ca intrări
     pinMode(btnGPIO, INPUT);
+    pinMode(vibrationSensorPin, INPUT);
 
     xTaskCreatePinnedToCore(
         connectToWiFi,    // Funcția task-ului
@@ -62,6 +88,26 @@ void setup() {
         1,                // Prioritatea task-ului
         NULL,             // Handle-ul task-ului (în acest caz, niciunul)
         1                 // Nucleul procesorului pe care rulează task-ul
+    );
+
+    xTaskCreatePinnedToCore(
+        readVibrationSensor,   // Funcția task-ului
+        "readVibrationSensor", // Numele task-ului
+        4096,                  // Stiva task-ului (dimensiunea în octeți)
+        NULL,                  // Parametrul task-ului (în acest caz, niciunul)
+        1,                     // Prioritatea task-ului
+        NULL,                  // Handle-ul task-ului (în acest caz, niciunul)
+        1                      // Nucleul procesorului pe care rulează task-ul
+    );
+
+    xTaskCreatePinnedToCore(
+        sendNotification,   // Funcția task-ului
+        "sendNotification", // Numele task-ului
+        4096,                // Stiva task-ului (dimensiunea în octeți)
+        NULL,                // Parametrul task-ului (în acest caz, niciunul)
+        1,                   // Prioritatea task-ului
+        NULL,                // Handle-ul task-ului (în acest caz, niciunul)
+        1                    // Nucleul procesorului pe care rulează task-ul
     );
 }
 

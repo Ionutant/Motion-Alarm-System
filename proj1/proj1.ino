@@ -84,9 +84,9 @@ void setup() {
         connectToWiFi,    // Funcția task-ului
         "connectToWiFi",  // Numele task-ului
         8192,             // Stiva task-ului (dimensiunea în octeți)
-        NULL,             // Parametrul task-ului (în acest caz, niciunul)
+        NULL,             // Parametrul task-ului
         1,                // Prioritatea task-ului
-        NULL,             // Handle-ul task-ului (în acest caz, niciunul)
+        NULL,             // Handle-ul task-ului 
         1                 // Nucleul procesorului pe care rulează task-ul
     );
 
@@ -94,9 +94,9 @@ void setup() {
         readVibrationSensor,   // Funcția task-ului
         "readVibrationSensor", // Numele task-ului
         4096,                  // Stiva task-ului (dimensiunea în octeți)
-        NULL,                  // Parametrul task-ului (în acest caz, niciunul)
+        NULL,                  // Parametrul task-ului 
         1,                     // Prioritatea task-ului
-        NULL,                  // Handle-ul task-ului (în acest caz, niciunul)
+        NULL,                  // Handle-ul task-ului 
         1                      // Nucleul procesorului pe care rulează task-ul
     );
 
@@ -104,15 +104,15 @@ void setup() {
         sendNotification,   // Funcția task-ului
         "sendNotification", // Numele task-ului
         4096,                // Stiva task-ului (dimensiunea în octeți)
-        NULL,                // Parametrul task-ului (în acest caz, niciunul)
+        NULL,                // Parametrul task-ului 
         1,                   // Prioritatea task-ului
-        NULL,                // Handle-ul task-ului (în acest caz, niciunul)
+        NULL,                // Handle-ul task-ului 
         1                    // Nucleul procesorului pe care rulează task-ul
     );
 }
 
 void loop() {
-    // Restul codului poate rămâne neschimbat
+   
     btnState = digitalRead(btnGPIO);
     
     if (btnState == LOW) {
